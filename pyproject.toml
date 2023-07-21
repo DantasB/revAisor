@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "llm-applications-cos836"
+version = "0.1.0"
+description = "revAIsor, your AI revisor for scientific works"
+authors = ["DantasB <bdantas@cos.ufrj.br>", "lagaleno <galeno@cos.ufrj.br>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+streamlit = "1.25.0"
+openai = "0.27.8"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+black = "^23.7.0"
+ruff = "^0.0.279"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
