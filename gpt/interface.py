@@ -97,7 +97,7 @@ class GPTInterface:
                     "content": self.prompt
                 }
             ],
-            temperature=0.5,
+            temperature=0,
             max_tokens=10000,
             top_p=0.5,
             frequency_penalty=0,
