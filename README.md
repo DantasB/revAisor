@@ -30,18 +30,26 @@ poetry install
 poetry shell
 ```
 
-5. Agora que o ambiente virtual está ativo, você pode executar o aplicativo Streamlit normalmente usando o comando `streamlit run`:
+5. Crie um arquivo `.env` na raiz do projeto seguindo o modelo do arquivo `.env.example` e preencha com as informações necessárias.
+
+```bash
+OPENAI_API_KEY="sua_chave_de_api"
+```
+
+6. Agora que o ambiente virtual está ativo, você pode executar o aplicativo Streamlit normalmente usando o comando `streamlit run`:
 
 ```bash
 streamlit run app.py
 ```
 
-6. O aplicativo será iniciado e abrirá automaticamente uma página no navegador.
+7. O aplicativo será iniciado e abrirá automaticamente uma página no navegador.
 
 
 ### Estrutura do projeto
 
-- `app.py`: Este é o arquivo principal do aplicativo que contém o código do projeto
+- `app.py`: Este é o arquivo principal do aplicativo que contém o código do projeto;
+- `requirements.txt`: Este arquivo contém as dependências do projeto;
+- `gpt/interface.py`: Este arquivo contém a classe que faz a interface com a API do GPT-3.5;
 - `README.md`: Este arquivo com instruções sobre como executar o aplicativo.
 
 ### Contribuição
