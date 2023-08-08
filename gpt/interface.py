@@ -7,7 +7,13 @@ load_dotenv()
 class GPTInterface:
     __API_KEY = os.getenv("OPENAI_API_KEY")
 
+    def __validate_key(self):
+        if not self.__API_KEY:
+            raise ValueError("API KEY is not defined. Please, refer to the README.md file.")
+
     def __init__(self, prompt, model="gpt-3.5-turbo-16k", max_tokens=10000):
+        self.__validate_key()
+
         self.prompt = prompt
         self.model = model
         self.max_tokens = max_tokens
