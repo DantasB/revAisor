@@ -1,5 +1,5 @@
 import streamlit as st
-from gpt.interface import GPTInterface
+from gpt.interface import GPTInterface, LLAMA2Interface
 
 # Configuração de página
 st.set_page_config(page_title="revAIsor - Revisão de Artigos Científicos", layout="wide")
@@ -57,7 +57,7 @@ def second_page():
     # Chame o modelo ChatGPT e obtenha a resposta
     if prompt:
         st.write("Resposta do revAIsor:")
-        st.write(GPTInterface(prompt).response)
+        st.write(LLAMA2Interface(prompt).response)
 
     # Opção para submeter outro texto
     if st.button("Submeter outro texto"):
