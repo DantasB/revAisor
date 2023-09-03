@@ -143,13 +143,11 @@ class LLAMA2Interface:
             - Others.
             Where the Others you can generate other categories.
             Also use clear language when you are suggesting to be clear in which parts of the text the author should make the changes.
-            List as many suggestions as you can. Besides, check if the document follows the DoCO, the Document Components Ontology that provides a structured vocabulary written in OWL 2 DL of document components, both structural (e.g. block, inline, paragraph, section, chapter) and rhetorical (e.g. introduction, discussion, acknowledgments, reference list, figure, appendix), enabling these components, and documents composed of them, to be described in RDF.
+            List as many suggestions as you can.
 
             Example 1:
-            [example input]: A ideação e construção do CryptoComponent envolveu a elicitação de requisitos para seu funcionamento. Considerando a natureza restritiva dos dispositivos IoT, foi necessário identificar os tipos de algoritmos de criptografia passíveis de serem aplicados para mitigar o problema de segurança durante o tráfego de dados no sistema. Nesse contexto, dentre diferentes algoritmos de criptografia, tais como o Elephant [Beyne et al. 2020], Pyjamask [Goudarzi et al. 2020], SPARKLE [Beierle et al. 2020] e SPECK [Beaulieu et al. 2015]. Dentre os algoritmos de criptografia leve identificados na literatura técnica, foi escolhido o SPECK, tendo em vista ter sido criado para ser utilizado em dispositivos de baixo poder computacional, como por exemplo rede de sensores, incluindo dispositivos IoT [Beaulieu et al. 2015]. Sua escolha foi também influenciada pela simplicidade de utilização, na qual é necessário fornecer apenas uma chave única e uma mensagem de tamanho arbitrário para que o algoritmo produza uma mensagem encriptada. Neste sentido, não é necessário qualquer tipo de autenticação. Além disso, o SPECK é de simples implementação, apresenta segurança avaliada e, por ser uma criptografia de bloco, apresenta baixo consumo de recurso computacional [Beaulieu et al. 2015]. Adicionalmente, para fins de avaliação do componente, foi implementado o algoritmo de XOR, escolhido por ser uma das etapas para construção do algoritmo SPECK. Em seguida, os requisitos funcionais e não funcionais do CryptoComponent foram especificados. Dentre estes, destacam-se a capacidade do componente de encriptar o dado passado como parâmetro imediatamente antes de ser enviado pela rede, garantindo assim que o dado trafegue de forma encriptada até seu recebimento na outra ponta e a capacidade do componente de decriptar o dado antes de ser consumido. Essa característica configura uma Criptografia E2E (End to End). A Tabela 1 mostra um extrato dos requisitos funcionais e não funcionais especificados para criação do CryptoComponent. A lista completa dos requisitos do CryptoComponent pode ser acessada em bit.ly/cryptocomponentlistofrequirements. Após a definição dos requisitos, as escolhas para a implementação do projeto foram dadas visando garantir maior reutilização de código. Além disso, algumas decisões do projeto variaram entre a otimização do uso de recursos computacionais, tendo em vista a natureza do dispositivo e a facilidade da utilização por parte dos desenvolvedores, privilegiando a ampla utilização do componente. Sendo assim, por ser um componente para ser utilizado em dispositivos IoT, o CryptoComponent foi codificado na linguagem de programação C++. O diagrama de componentes apresentado na Figura 1 ilustra sua estrutura. O componente pode ser utilizado em um dispositivo IoT por meio da instanciação de um objeto da classe CryptoComponent informando o algoritmo de interesse (XOR ou SPECK) e informando se a demanda é por Encriptar ou Decriptar a mensagem considerando uma Chave específica. O CryptoComponent possibilita sua utilização pelos sistemas de software por meio de uma API (Application Programming Interface) que oferece acesso para as facilidades de encriptar e decriptar a informação independente da linguagem de programação. Neste caso, a comunicação entre os dispositivos IoT e o sistema de software deve ser realizada por meio de um broker, com protocolo MQTT, conforme apresentado na Figura 2. A disponibilidade da API do CryptoComponent garante a possibilidade da encriptação/decriptação dos dados em todo o fluxo de recepção e envio da mensagem. O envio dos dados ao broker é feito por meio de rede pública utilizando o protocolo MQTT, logo, a utilização do componente nos dispositivos IoT garante a segurança do envio da mensagem. Da mesma forma, a segurança dos dados consumidos do broker é garantida porque as aplicações que estão consumindo esses dados, em nosso caso, são executadas em K3S, um kubernetes de baixo custo, que garante que cada uma delas utilize uma rede privada, fazendo com que seu tráfego de rede não seja visto externamente. Desta forma, pode-se dizer que os dados são transmitidos de forma segura e encriptada em cada um dos momentos da arquitetura apresentada na Figura 2. É importante ressaltar que a construção da API representa uma alternativa para garantir que o componente seja utilizado nos sistemas desenvolvidos pelo Laboratório de Engenharia de Software, não sendo necessário que outro usuário, por exemplo, tenha que utilizar o sistema K3S ou mesmo hospedar o serviço da API dentro de uma rede privada.
+            [example input]: A ideação e construção do CryptoComponent envolveu a elicitação de requisitos para seu funcionamento. Considerando a natureza restritiva dos dispositivos IoT, foi necessário identificar os tipos de algoritmos de criptografia passíveis de serem aplicados para mitigar o problema de segurança durante o tráfego de dados no sistema. Nesse contexto, dentre diferentes algoritmos de criptografia, tais como o Elephant [Beyne et al. 2020], Pyjamask [Goudarzi et al. 2020], SPARKLE [Beierle et al. 2020] e SPECK [Beaulieu et al. 2015]. Dentre os algoritmos de criptografia leve identificados na literatura técnica, foi escolhido o SPECK, tendo em vista ter sido criado para ser utilizado em dispositivos de baixo poder computacional, como por exemplo rede de sensores, incluindo dispositivos IoT [Beaulieu et al. 2015]. Sua escolha foi também influenciada pela simplicidade de utilização, na qual é necessário fornecer apenas uma chave única e uma mensagem de tamanho arbitrário para que o algoritmo produza uma mensagem encriptada. Neste sentido, não é necessário qualquer tipo de autenticação. Além disso, o SPECK é de simples implementação, apresenta segurança avaliada e, por ser uma criptografia de bloco, apresenta baixo consumo de recurso computacional [Beaulieu et al. 2015]. Adicionalmente, para fins de avaliação do componente, foi implementado o algoritmo de XOR, escolhido por ser uma das etapas para construção do algoritmo SPECK. Em seguida, os requisitos funcionais e não funcionais do CryptoComponent foram especificados. Dentre estes, destacam-se a capacidade do componente de encriptar o dado passado como parâmetro imediatamente antes de ser enviado pela rede, garantindo assim que o dado trafegue de forma encriptada até seu recebimento na outra ponta e a capacidade do componente de decriptar o dado antes de ser consumido. Essa característica configura uma Criptografia E2E (End to End). A Tabela 1 mostra um extrato dos requisitos funcionais e não funcionais especificados para criação do CryptoComponent. A lista completa dos requisitos do CryptoComponent pode ser acessada em bit.ly/cryptocomponentlistofrequirements. Após a definição dos requisitos, as escolhas para a implementação do projeto foram dadas visando garantir maior reutilização de código. Além disso, algumas decisões do projeto variaram entre a otimização do uso de recursos computacionais, tendo em vista a natureza do dispositivo e a facilidade da utilização por parte dos desenvolvedores, privilegiando a ampla utilização do componente. Sendo assim, por ser um componente para ser utilizado em dispositivos IoT, o CryptoComponent foi codificado na linguagem de programação C++. O diagrama de componentes apresentado na Figura 1 ilustra sua estrutura. O componente pode ser utilizado em um dispositivo IoT por meio da instanciação de um objeto da classe CryptoComponent informando o algoritmo de interesse (XOR ou SPECK) e informando se a demanda é por Encriptar ou Decriptar a mensagem considerando uma Chave específica.
             [your output]: The article is well written, clear, and easy to understand. But there are still a few things to improve like:
-            Improve References:
-            - For instance, what is an MQTT protocol (with references)? Missing details about K3S (with references) for replication purposes. Unclear importance of API in relation to encryption/decryption already on IoT device. Clarify the role of Engineering Software Lab and systems needing the API. More explanation needed to avoid doubts.
             Theme Violation:
             - Authors lack cryptography experience and potentially implement insecure algorithms.
             - Critical issues with the created component, such as allowing insecure algorithms.
@@ -170,17 +168,17 @@ class LLAMA2Interface:
                 "inputs": input,
                 "parameters": {
                     "temperature": self.temperature,
-                    "max_tokens": 30000,
+                    "max_tokens": 40000,
                     "top_p": 0.5,
                     "frequency_penalty": 0,
                     "presence_penalty": 0
                 }
             }
-        ).json()["generated_text"]
+        ).json()
     
     def __evaluate_prompt_grammar(self):
         input = f"""
-            [Context]: You are a scientific article revisor and one of the steps is the grammar suggestion tool, giving which word or sentence should I change. 
+            [Context]: You are a scientific article revisor and one of the steps is the grammar suggestion tool, giving which word or sentence should I change. Besides, check if the document follows the DoCO, the Document Components Ontology that provides a structured vocabulary written in OWL 2 DL of document components, both structural (e.g. block, inline, paragraph, section, chapter) and rhetorical (e.g. introduction, discussion, acknowledgements, reference list, figure, appendix), enabling these components, and documents composed of them, to be described in RDF.
 
             Example 1:
             [example input]: IoT software systems have made great strides since the new industrial revolution known as Industry 4.0. Its usage has been growing over the years, and research reports indicate the occurrence of exponential growth related to the utilization of these devices, with a forecast of surpassing 30 billion devices by 2024.
@@ -193,11 +191,6 @@ class LLAMA2Interface:
             [your output]: 1 suggestion. Conciseness.
             - You should replace "run the simulation following" in the sentence: "[...] that will run the simulation following the number [...]" with "simulate". This will bring a non-wordy sentence.
 
-            Example 3:
-            [example input]: We have to encrypted data
-            [your output]: 1 possible fixes. Grammar.
-            - You should replace "encrypted" in the sentence: "We have to encrypted data" with "encrypt". That would correct the verb form.
-
             Now whats your output to my input:
             [user input]: {self.prompt}
         """
@@ -208,10 +201,10 @@ class LLAMA2Interface:
                 "inputs": input,
                 "parameters": {
                     "temperature": self.temperature,
-                    "max_tokens": 30000,
+                    "max_tokens": 40000,
                     "top_p": 0.5,
                     "frequency_penalty": 0,
                     "presence_penalty": 0
                 }
             }
-        ).json()["generated_text"]
+        ).json()
