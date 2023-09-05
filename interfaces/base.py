@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 
 load_dotenv()
 
+
 class BaseInterface(ABC):
     def __init__(self, prompt, model, evaluations, max_tokens=10000, temperature=0.5):
         self.prompt = prompt
@@ -11,7 +12,6 @@ class BaseInterface(ABC):
         self.temperature = temperature
         self.evaluations = evaluations
         self.response = self.get_response()
-
 
     @abstractmethod
     def evaluate_prompt_by_theme(self):
@@ -33,6 +33,4 @@ class BaseInterface(ABC):
         for evaluation in self.evaluations:
             evaluation_results[evaluation["title"]] = evaluation["method"]()
 
-        return {
-            "evaluations": evaluation_results
-        }
+        return {"evaluations": evaluation_results}

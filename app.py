@@ -2,10 +2,7 @@ import streamlit as st
 from interfaces.gpt.interface import GPTInterface
 from interfaces.llama2.interface import LLAMA2Interface
 
-st.set_page_config(
-    page_title="revAIsor - Scientific Article Review",
-    layout="wide"
-)
+st.set_page_config(page_title="revAIsor - Scientific Article Review", layout="wide")
 
 st.markdown(
     """
@@ -33,11 +30,15 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+
 def main():
     st.title("Welcome to revAIsor!")
     st.markdown(
         """
-        revAIsor is an AI designed to assist you in reviewing scientific articles before submitting them to conferences and journals. Just paste your article text in the text box below, and revAIsor will generate suggestions and improvements for your content. Give it a try!
+        revAIsor is an AI designed to assist you in reviewing scientific articles before 
+        submitting them to conferences and journals. Just paste your article text in the text 
+        box below, and revAIsor will generate suggestions and improvements for your content. 
+        Give it a try!
         """
     )
 
@@ -48,6 +49,7 @@ def main():
         st.session_state["text"] = input_text
         st.session_state["model"] = selected_model
         st.experimental_rerun()
+
 
 def second_page():
     prompt = st.session_state.get("text", "")
@@ -72,6 +74,7 @@ def second_page():
         st.session_state.pop("text")
         st.session_state.pop("model")
         st.experimental_rerun()
+
 
 if __name__ == "__main__":
     if "text" in st.session_state:
