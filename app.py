@@ -1,10 +1,12 @@
 import streamlit as st
-from gpt.interface import GPTInterface, LLAMA2Interface
+from interfaces.gpt.interface import GPTInterface
+from interfaces.llama2.interface import LLAMA2Interface
 
-# Configuração de página
-st.set_page_config(page_title="revAIsor - Revisão de Artigos Científicos", layout="wide")
+st.set_page_config(
+    page_title="revAIsor - Scientific Article Review",
+    layout="wide"
+)
 
-# Estilo da página
 st.markdown(
     """
     <style>
@@ -31,41 +33,47 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Página inicial - Boas vindas
 def main():
-    st.title("Bem-vindo ao revAIsor!")
+    st.title("Welcome to revAIsor!")
     st.markdown(
         """
-        O revAIsor é uma inteligência artificial projetada para auxiliar você na revisão de artigos científicos
-        antes de submetê-los a conferências e periódicos. Basta inserir o texto do seu artigo na caixa de texto
-        abaixo e o revAIsor irá gerar sugestões e melhorias para o seu conteúdo. Experimente agora mesmo!
+        revAIsor is an AI designed to assist you in reviewing scientific articles before submitting them to conferences and journals. Just paste your article text in the text box below, and revAIsor will generate suggestions and improvements for your content. Give it a try!
         """
     )
-    input_text = st.text_area("Insira o texto do seu artigo aqui:")
-    if st.button("Revisar"):
-        # Define o valor do texto na session_state e redireciona para a segunda página
+
+    selected_model = st.radio("Select a model", ("GPT", "LLAMA2"))
+
+    input_text = st.text_area("Insert your article text here:")
+    if st.button("Review"):
         st.session_state["text"] = input_text
+        st.session_state["model"] = selected_model
         st.experimental_rerun()
 
-# Segunda página - Sugestões do revAIsor
 def second_page():
     prompt = st.session_state.get("text", "")
-    st.title("Sugestões do revAIsor")
-    st.write("Texto revisado:")
+    selected_model = st.session_state.get("model", "")
+    st.title("revAIsor Suggestions")
+    st.write("Revised text:")
     st.write(prompt)
 
-    # Chame o modelo ChatGPT e obtenha a resposta
-    if prompt:
-        st.write("Resposta do revAIsor:")
-        st.write(LLAMA2Interface(prompt).response)
+    if selected_model == "GPT":
+        interface = GPTInterface(prompt)
+    elif selected_model == "LLAMA2":
+        interface = LLAMA2Interface(prompt)
+    else:
+        st.error("Invalid model selected. Please, try again.")
+        st.stop()
 
-    # Opção para submeter outro texto
-    if st.button("Submeter outro texto"):
+    if prompt:
+        st.write("revAIsor Response:")
+        st.write(interface.response)
+
+    if st.button("Submit another text"):
         st.session_state.pop("text")
+        st.session_state.pop("model")
         st.experimental_rerun()
 
 if __name__ == "__main__":
-    # Verifica se a segunda página foi acessada com parâmetros
     if "text" in st.session_state:
         second_page()
     else:
