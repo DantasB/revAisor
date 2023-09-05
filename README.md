@@ -34,6 +34,7 @@ poetry shell
 
 ```bash
 OPENAI_API_KEY="sua_chave_de_api"
+LLAMA2_API_URL="sua_url_da_api"
 ```
 
 6. Agora que o ambiente virtual está ativo, você pode executar o aplicativo Streamlit normalmente usando o comando `streamlit run`:
