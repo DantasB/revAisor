@@ -5,7 +5,7 @@ import openai
 
 class GPTInterface(BaseInterface):
     def __init__(
-        self, prompt, model="gpt-3.5-turbo-16k", max_tokens=10000, temperature=0.5
+        self, context, prompt, model="gpt-3.5-turbo-16k", max_tokens=10000, temperature=0.5
     ):
         self.api_key = os.getenv("OPENAI_API_KEY")
         self.evaluations = [
@@ -22,6 +22,7 @@ class GPTInterface(BaseInterface):
         ]
 
         super().__init__(
+            context=context,
             prompt=prompt,
             model=model,
             evaluations=self.evaluations,
@@ -43,7 +44,7 @@ class GPTInterface(BaseInterface):
             messages=[
                 {
                     "role": "system",
-                    "content": """You are a scientific article revisor and you are specialist
+                    "content": f"""You are a scientific article revisor and you are specialist
                     in every theme that is written in the text.\n\nJudge with knowledge
                     suggesting the author in which topics he would enfasize better and what
                     should he rewrite to bring better readability of the theme.\n\nThe
@@ -60,7 +61,8 @@ class GPTInterface(BaseInterface):
                     section, chapter) and rhetorical (e.g. introduction, discussion,
                     acknowledgements, reference list, figure, appendix), enabling 
                     these components, and documents composed of them, to be described
-                    in RDF.""",
+                    in RDF. The user is also giving you a context about the article, so
+                    you can use it to evaluate the text: {self.context}""",
                 },
                 {
                     "role": "user",
@@ -150,7 +152,7 @@ class GPTInterface(BaseInterface):
                     Explanation:\n-Confusing explanation of the API's importance and the 
                     Engineering Software Lab's role.""",
                 },
-                {"role": "user", "content": self.prompt},
+                {"role": "user", "content": f"This is my prompt: {self.prompt}"},
             ],
             temperature=self.temperature,
             max_tokens=self.max_tokens,
@@ -165,7 +167,7 @@ class GPTInterface(BaseInterface):
             messages=[
                 {
                     "role": "system",
-                    "content": """You are a scientific article revisor and one of the steps is 
+                    "content": f"""You are a scientific article revisor and one of the steps is 
                     the grammar suggestion tool, giving which word or sentence should i 
                     change. \n\nThe suggestions should be related to Correctness like Grammar 
                     and spelling. Consistency in spelling and and English fluency.\n\nAlso in 
@@ -174,7 +176,8 @@ class GPTInterface(BaseInterface):
                     Delivery, these texts shouls have a formal writing.\n\nYou also should 
                     avoid suggestions that are already in the text. It's not necessary to 
                     suggest things that are already beeing made.\n\nTry to give at least two 
-                    suggestions.""",
+                    suggestions. The user is also giving you a context about the article, so
+                    you can use it to evaluate the text: {self.context}""",
                 },
                 {
                     "role": "user",
@@ -223,7 +226,7 @@ class GPTInterface(BaseInterface):
                     in the sentence: "We have to encrypted data" with "encrypt". That would 
                     correct the verb form.""",
                 },
-                {"role": "user", "content": self.prompt},
+                {"role": "user", "content": f"This is my prompt: {self.prompt}"},
             ],
             temperature=0,
             max_tokens=self.max_tokens,

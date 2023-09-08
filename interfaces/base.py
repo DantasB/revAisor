@@ -5,21 +5,14 @@ load_dotenv()
 
 
 class BaseInterface(ABC):
-    def __init__(self, prompt, model, evaluations, max_tokens=10000, temperature=0.5):
+    def __init__(self, context, prompt, model, evaluations, max_tokens=10000, temperature=0.5):
+        self.context = context
         self.prompt = prompt
         self.model = model
         self.max_tokens = max_tokens
         self.temperature = temperature
         self.evaluations = evaluations
         self.response = self.get_response()
-
-    @abstractmethod
-    def evaluate_prompt_by_theme(self):
-        pass
-
-    @abstractmethod
-    def evaluate_prompt_grammar(self):
-        pass
 
     @abstractmethod
     def validate_initialization(self):

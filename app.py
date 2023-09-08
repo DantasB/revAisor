@@ -42,10 +42,14 @@ def main():
         """
     )
 
-    selected_model = st.radio("Select a model", ("GPT", "LLAMA2"))
+    selected_model = st.radio("Select a model", ("GPT-3.5", "LLAMA2"))
+
+    context_text = st.text_area(
+        "Explain what is the objective of your article and what is the context of your work:")
 
     input_text = st.text_area("Insert your article text here:")
     if st.button("Review"):
+        st.session_state["context"] = context_text
         st.session_state["text"] = input_text
         st.session_state["model"] = selected_model
         st.experimental_rerun()
@@ -54,14 +58,15 @@ def main():
 def second_page():
     prompt = st.session_state.get("text", "")
     selected_model = st.session_state.get("model", "")
+    context = st.session_state.get("context", "")
     st.title("revAIsor Suggestions")
     st.write("Revised text:")
     st.write(prompt)
 
-    if selected_model == "GPT":
-        interface = GPTInterface(prompt)
+    if selected_model == "GPT-3.5":
+        interface = GPTInterface(context, prompt)
     elif selected_model == "LLAMA2":
-        interface = LLAMA2Interface(prompt)
+        interface = LLAMA2Interface(context, prompt)
     else:
         st.error("Invalid model selected. Please, try again.")
         st.stop()
@@ -73,6 +78,7 @@ def second_page():
     if st.button("Submit another text"):
         st.session_state.pop("text")
         st.session_state.pop("model")
+        st.session_state.pop("context")
         st.experimental_rerun()
 
 
