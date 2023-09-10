@@ -1,8 +1,16 @@
 import streamlit as st
 from interfaces.gpt.interface import GPTInterface
 from interfaces.llama2.interface import LLAMA2Interface
+from random import shuffle
 
 st.set_page_config(page_title="revAIsor - Scientific Article Review", layout="wide")
+
+
+@st.cache_resource
+def randomized_models():
+    models = ["Modelo 2", "Modelo 1"]
+    shuffle(models)
+    return models
 
 st.markdown(
     """
@@ -42,7 +50,7 @@ def main():
         """
     )
 
-    selected_model = st.radio("Select a model", ("GPT-3.5", "LLAMA2"))
+    selected_model = st.radio("Select a model", randomized_models())
 
     context_text = st.text_area(
         "Explain what is the objective of your article and what is the context of your work:")
@@ -63,9 +71,9 @@ def second_page():
     st.write("Revised text:")
     st.write(prompt)
 
-    if selected_model == "GPT-3.5":
+    if selected_model == "Modelo 2":
         interface = GPTInterface(context, prompt)
-    elif selected_model == "LLAMA2":
+    elif selected_model == "Modelo 1":
         interface = LLAMA2Interface(context, prompt)
     else:
         st.error("Invalid model selected. Please, try again.")
