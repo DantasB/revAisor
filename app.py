@@ -1,6 +1,5 @@
 import streamlit as st
-from interfaces.gpt.interface import GPTInterface
-from interfaces.llama2.interface import LLAMA2Interface
+from interfaces import AVAILABLE_MODELS
 from random import shuffle
 
 st.set_page_config(page_title="revAIsor - Scientific Article Review", layout="wide")
@@ -71,14 +70,12 @@ def second_page():
     st.write("Revised text:")
     st.write(prompt)
 
-    if selected_model == "Modelo 2":
-        interface = GPTInterface(context, prompt)
-    elif selected_model == "Modelo 1":
-        interface = LLAMA2Interface(context, prompt)
-    else:
+    model = AVAILABLE_MODELS[selected_model]
+    if not model:
         st.error("Invalid model selected. Please, try again.")
         st.stop()
 
+    interface = model(context, prompt)
     if prompt:
         st.write("revAIsor Response:")
         st.write(interface.response)

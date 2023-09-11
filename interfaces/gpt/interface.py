@@ -17,8 +17,13 @@ class GPTInterface(BaseInterface):
             {
                 "title": "Grammar",
                 "description": "Evaluate the text by grammar.",
-                "method": self.evaluate_prompt_grammar,
+                "method": self.evaluate_prompt_by_grammar,
             },
+            {
+                "title": "Coesion",
+                "description": "Evaluate the text by coesion.",
+                "method": self.evaluate_prompt_by_coesion,                
+            }
         ]
 
         super().__init__(
@@ -161,7 +166,7 @@ class GPTInterface(BaseInterface):
             presence_penalty=0,
         )["choices"][0]["message"]["content"]
 
-    def evaluate_prompt_grammar(self):
+    def evaluate_prompt_by_grammar(self):
         return openai.ChatCompletion.create(
             model=self.model,
             messages=[
@@ -227,6 +232,37 @@ class GPTInterface(BaseInterface):
                     correct the verb form.""",
                 },
                 {"role": "user", "content": f"This is my prompt: {self.prompt}"},
+            ],
+            temperature=0,
+            max_tokens=self.max_tokens,
+            top_p=0.5,
+            frequency_penalty=0,
+            presence_penalty=0,
+        )["choices"][0]["message"]["content"]
+
+    def evaluate_prompt_by_coesion(self):
+        return openai.ChatCompletion.create(
+            model=self.model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": f"""You are a scientific article revisor and one of the steps is 
+                    to evaluate the prompt coesion. The user will give you the introduction,
+                    the abstract and the conclusion of the article. Your objective is to evaluate
+                    if they make sense, for example, if the user give the abstract and the
+                    introduction talks about other thing, there's something wrong and you should
+                    point that to the user. If the introduction says about something but the
+                    conclusion is the oposite you should also point that to the user. If the 
+                    introduction and conclusion are consistent but the abstract is not consistent,
+                    you should also point that to the user. But, if the three are consistents,
+                    you should say that the three are consistent. The user is also giving you a
+                    context about the article, so you can use it to evaluate the
+                    text: {self.context}""",
+                },
+                {"role": "user", "content": f"""
+                    These are my prompts: 
+                    {self.prompt}
+                    """},
             ],
             temperature=0,
             max_tokens=self.max_tokens,

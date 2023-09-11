@@ -11,7 +11,7 @@ class LLAMA2Interface(BaseInterface):
             {
                 "title": "Grammar",
                 "description": "Grammar suggestions for your text.",
-                "method": self.evaluate_prompt_grammar,
+                "method": self.evaluate_prompt_by_grammar,
             },
             {
                 "title": "Theme",
@@ -72,7 +72,7 @@ class LLAMA2Interface(BaseInterface):
             },
         ).json()
 
-    def evaluate_prompt_grammar(self):
+    def evaluate_prompt_by_grammar(self):
         input = f"""
             [Context]: You are a scientific article revisor and one of the steps is the 
             grammar suggestion tool, giving which word or sentence should I change. Besides, 
