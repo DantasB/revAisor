@@ -24,6 +24,11 @@ class LLAMA2Interface(BaseInterface):
                 "description": "Theme suggestions for your text.",
                 "method": self.evaluate_prompts_by_theme,
             },
+            {
+                "title": "Cohesion",
+                "description": "Evaluate the text by cohesion.",
+                "method": self.evaluate_prompt_by_cohesion,
+            },
         ]
 
         super().__init__(
@@ -59,7 +64,6 @@ class LLAMA2Interface(BaseInterface):
             List as many suggestions as you can.
             The user is also giving you a context about the article, so you can use it
             to evaluate the text: {self.context}
-
             ---
             {prompt}
         """
@@ -121,6 +125,40 @@ class LLAMA2Interface(BaseInterface):
             },
         ).json()['generated_text']
 
+    def evaluate_prompt_by_cohesion(self) -> Dict[str, str]:
+        input = f"""
+            [Context]: You are a scientific article revisor and one of the steps is 
+            to evaluate the prompt coesion. The user will give you the introduction,
+            the abstract and the conclusion of the article. Your objective is to evaluate
+            if they make sense, for example, if the user give the abstract and the
+            introduction talks about other thing, there's something wrong and you should
+            point that to the user. If the introduction says about something but the
+            conclusion is the oposite you should also point that to the user. If the 
+            introduction and conclusion are consistent but the abstract is not consistent,
+            you should also point that to the user. But, if the three are consistents,
+            you should say that the three are consistent. The user is also giving you a
+            context about the article, so you can use it to evaluate the
+            text: {self.context}
+            ---
+
+            [user input]: These are my prompts: 
+            Abstract:{self.prompts['abstract']}
+            Introduction:{self.prompts['introduction']}
+            Conclusion:{self.prompts['conclusion']}
+        """
+        return requests.post(
+            self.ngrok_url + "/generate",
+            json={
+                "inputs": input,
+                "parameters": {
+                    "temperature": self.temperature,
+                    "max_tokens": self.max_tokens,
+                    "top_p": 0.5,
+                    "frequency_penalty": 0,
+                    "presence_penalty": 0,
+                },
+            },
+        ).json()['generated_text']
     def evaluate_prompts_by_theme(self) -> Dict[str, str]:
         results = {}
         for prompt_name, prompt_text in self.prompts.items():
