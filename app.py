@@ -7,13 +7,11 @@ from interfaces import AVAILABLE_MODELS
 
 st.set_page_config(page_title="revAIsor - Scientific Article Review", layout="wide")
 
-
 @st.cache_resource
 def randomized_models() -> List[str]:
     models = ["Modelo 2", "Modelo 1"]
     shuffle(models)
     return models
-
 
 st.markdown(
     """
@@ -41,7 +39,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-
 def main() -> None:
     st.title("Welcome to revAIsor!")
     st.markdown(
@@ -59,40 +56,58 @@ def main() -> None:
         "Explain what is the objective of your article and what is the context of your work:"
     )
 
-    input_text = st.text_area("Insert your article text here:")
-    if st.button("Review"):
-        st.session_state["context"] = context_text
-        st.session_state["text"] = input_text
-        st.session_state["model"] = selected_model
-        st.experimental_rerun()
+    abstract_text = st.text_area("Insert your abstract text here:")
+    introduction_text = st.text_area("Insert your introduction text here:")
+    conclusion_text = st.text_area("Insert your conclusion text here:")
 
+    if st.button("Review"):
+        if not (abstract_text and introduction_text and conclusion_text):
+            st.error("Please fill in all three fields: Abstract, Introduction, and Conclusion.")
+        else:
+            st.session_state["context"] = context_text
+            st.session_state["abstract"] = abstract_text
+            st.session_state["introduction"] = introduction_text
+            st.session_state["conclusion"] = conclusion_text
+            st.session_state["model"] = selected_model
+            st.experimental_rerun()
 
 def second_page() -> None:
-    prompt = st.session_state.get("text", "")
+    abstract = st.session_state.get("abstract", "")
+    introduction = st.session_state.get("introduction", "")
+    conclusion = st.session_state.get("conclusion", "")
     selected_model = st.session_state.get("model", "")
     context = st.session_state.get("context", "")
     st.title("revAIsor Suggestions")
-    st.write("Revised text:")
-    st.write(prompt)
 
     model = AVAILABLE_MODELS[selected_model]
     if not model:
         st.error("Invalid model selected. Please, try again.")
         st.stop()
 
-    if prompt:
+    if abstract and introduction and conclusion:
+        # Use the selected model to evaluate prompts
+        prompts = {
+            "abstract": abstract,
+            "introduction": introduction,
+            "conclusion": conclusion,
+        }
+
+        # Get suggestions from the model
+        suggestions = model(context, prompts).response
+
         st.write("revAIsor Response:")
-        st.write(model(context, prompt).response)
+        st.write(suggestions)
 
     if st.button("Submit another text"):
-        st.session_state.pop("text")
+        st.session_state.pop("abstract")
+        st.session_state.pop("introduction")
+        st.session_state.pop("conclusion")
         st.session_state.pop("model")
         st.session_state.pop("context")
         st.experimental_rerun()
 
-
 if __name__ == "__main__":
-    if all(parameter in st.session_state for parameter in ["text", "context", "model"]):
+    if all(parameter in st.session_state for parameter in ["abstract", "introduction", "conclusion", "context", "model"]):
         second_page()
     else:
         main()

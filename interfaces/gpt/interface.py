@@ -1,4 +1,5 @@
 import os
+from typing import Dict, List
 
 import openai
 
@@ -10,7 +11,7 @@ class GPTInterface(BaseInterface):
     def __init__(
         self,
         context: str,
-        prompt: str,
+        prompts: Dict[str, str],
         model: str = "gpt-3.5-turbo-16k",
         max_tokens: int = 10000,
         temperature: float = 0.5,
@@ -19,23 +20,23 @@ class GPTInterface(BaseInterface):
             {
                 "title": "Theme",
                 "description": "Evaluate the text by theme.",
-                "method": self.evaluate_prompt_by_theme,
+                "method": self.evaluate_prompts_by_theme,
             },
             {
                 "title": "Grammar",
                 "description": "Evaluate the text by grammar.",
-                "method": self.evaluate_prompt_by_grammar,
+                "method": self.evaluate_prompts_by_grammar,
             },
             {
-                "title": "Coesion",
-                "description": "Evaluate the text by coesion.",
-                "method": self.evaluate_prompt_by_coesion,
+                "title": "Cohesion",
+                "description": "Evaluate the text by cohesion.",
+                "method": self.evaluate_prompt_by_cohesion,
             },
         ]
 
         super().__init__(
             context=context,
-            prompt=prompt,
+            prompts=prompts,
             model=model,
             evaluations=self.evaluations,
             max_tokens=max_tokens,
@@ -51,7 +52,7 @@ class GPTInterface(BaseInterface):
 
         openai.api_key = self.api_key
 
-    def evaluate_prompt_by_theme(self) -> str:
+    def evaluate_prompt_by_theme(self, prompt: str) -> str:
         return openai.ChatCompletion.create(
             model=self.model,
             messages=[
@@ -165,7 +166,7 @@ class GPTInterface(BaseInterface):
                     Explanation:\n-Confusing explanation of the API's importance and the 
                     Engineering Software Lab's role.""",
                 },
-                {"role": "user", "content": f"This is my prompt: {self.prompt}"},
+                {"role": "user", "content": f"This is my prompt: {prompt}"},
             ],
             temperature=self.temperature,
             max_tokens=self.max_tokens,
@@ -174,7 +175,7 @@ class GPTInterface(BaseInterface):
             presence_penalty=0,
         )["choices"][0]["message"]["content"]
 
-    def evaluate_prompt_by_grammar(self) -> str:
+    def evaluate_prompt_by_grammar(self, prompt: str) -> str:
         return openai.ChatCompletion.create(
             model=self.model,
             messages=[
@@ -239,7 +240,7 @@ class GPTInterface(BaseInterface):
                     in the sentence: "We have to encrypted data" with "encrypt". That would 
                     correct the verb form.""",
                 },
-                {"role": "user", "content": f"This is my prompt: {self.prompt}"},
+                {"role": "user", "content": f"This is my prompt: {prompt}"},
             ],
             temperature=0,
             max_tokens=self.max_tokens,
@@ -248,7 +249,7 @@ class GPTInterface(BaseInterface):
             presence_penalty=0,
         )["choices"][0]["message"]["content"]
 
-    def evaluate_prompt_by_coesion(self) -> str:
+    def evaluate_prompt_by_cohesion(self) -> str:
         return openai.ChatCompletion.create(
             model=self.model,
             messages=[
@@ -271,7 +272,13 @@ class GPTInterface(BaseInterface):
                     "role": "user",
                     "content": f"""
                     These are my prompts: 
-                    {self.prompt}
+                    ---
+                    Abstract:{self.prompts['abstract']}
+                    ---
+                    Introduction:{self.prompts['introduction']}
+                    ---
+                    Conclusion:{self.prompts['conclusion']}
+                    ---
                     """,
                 },
             ],
@@ -281,3 +288,17 @@ class GPTInterface(BaseInterface):
             frequency_penalty=0,
             presence_penalty=0,
         )["choices"][0]["message"]["content"]
+
+    def evaluate_prompts_by_theme(self) -> Dict[str, str]:
+        results = {}
+        for prompt_name, prompt_text in self.prompts.items():
+            result = self.evaluate_prompt_by_theme(prompt_text)
+            results[prompt_name] = result
+        return results
+
+    def evaluate_prompts_by_grammar(self) -> Dict[str, str]:
+        results = {}
+        for prompt_name, prompt_text in self.prompts.items():
+            result = self.evaluate_prompt_by_grammar(prompt_text)
+            results[prompt_name] = result
+        return results

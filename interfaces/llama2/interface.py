@@ -1,5 +1,5 @@
 import os
-from typing import Dict
+from typing import Dict, List
 
 import requests
 
@@ -8,7 +8,7 @@ from utils import should_have_all_defined
 
 
 class LLAMA2Interface(BaseInterface):
-    def __init__(self, context: str, prompt: str, max_tokens: int = 40000, temperature: float = 0):
+    def __init__(self, context: str, prompts: Dict[str, str], max_tokens: int = 40000, temperature: float = 0):
         should_have_all_defined(["LLAMA2_API_URL"])
 
         self.ngrok_url = os.environ["LLAMA2_API_URL"]
@@ -17,18 +17,18 @@ class LLAMA2Interface(BaseInterface):
             {
                 "title": "Grammar",
                 "description": "Grammar suggestions for your text.",
-                "method": self.evaluate_prompt_by_grammar,
+                "method": self.evaluate_prompts_by_grammar,
             },
             {
                 "title": "Theme",
                 "description": "Theme suggestions for your text.",
-                "method": self.evaluate_prompt_by_theme,
+                "method": self.evaluate_prompts_by_theme,
             },
         ]
 
         super().__init__(
             context=context,
-            prompt=prompt,
+            prompts=prompts,
             model=None,
             evaluations=self.evaluations,
             max_tokens=max_tokens,
@@ -39,7 +39,7 @@ class LLAMA2Interface(BaseInterface):
         if not requests.get(self.ngrok_url).ok:
             raise ValueError("Ngrok is not running. Please, run it and try again.")
 
-    def evaluate_prompt_by_theme(self) -> Dict[str, str]:
+    def evaluate_prompt_by_theme(self, prompt: str) -> Dict[str, str]:
         input = f"""
             [Context]: You are a scientific article revisor and you are a specialist in every 
             theme that is written in the text.
@@ -61,7 +61,7 @@ class LLAMA2Interface(BaseInterface):
             to evaluate the text: {self.context}
 
             ---
-            {self.prompt}
+            {prompt}
         """
 
         return requests.post(
@@ -76,9 +76,9 @@ class LLAMA2Interface(BaseInterface):
                     "presence_penalty": 0,
                 },
             },
-        ).json()
+        ).json()['generated_text']
 
-    def evaluate_prompt_by_grammar(self) -> Dict[str, str]:
+    def evaluate_prompt_by_grammar(self, prompt: str) -> Dict[str, str]:
         input = f"""
             [Context]: You are a scientific article revisor and one of the steps is the 
             grammar suggestion tool, giving which word or sentence should I change. Besides, 
@@ -105,7 +105,7 @@ class LLAMA2Interface(BaseInterface):
             was applied and the approach [...]"
             ---
             
-            [user input]: This is my prompt: {self.prompt}
+            [user input]: This is my prompt: {prompt}
         """
         return requests.post(
             self.ngrok_url + "/generate",
@@ -119,4 +119,18 @@ class LLAMA2Interface(BaseInterface):
                     "presence_penalty": 0,
                 },
             },
-        ).json()
+        ).json()['generated_text']
+
+    def evaluate_prompts_by_theme(self) -> Dict[str, str]:
+        results = {}
+        for prompt_name, prompt_text in self.prompts.items():
+            result = self.evaluate_prompt_by_theme(prompt_text)
+            results[prompt_name] = result
+        return results
+
+    def evaluate_prompts_by_grammar(self) -> Dict[str, str]:
+        results = {}
+        for prompt_name, prompt_text in self.prompts.items():
+            result = self.evaluate_prompt_by_grammar(prompt_text)
+            results[prompt_name] = result
+        return results

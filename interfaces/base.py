@@ -6,14 +6,14 @@ class BaseInterface(ABC):
     def __init__(
         self,
         context: str,
-        prompt: str,
+        prompts: Dict[str, str],
         model: Optional[str],
         evaluations: List[Dict[str, Any]],
         max_tokens: int = 10000,
         temperature: float = 0.5,
     ):
         self.context = context
-        self.prompt = prompt
+        self.prompts = prompts
         self.model = model
         self.max_tokens = max_tokens
         self.temperature = temperature
@@ -32,4 +32,4 @@ class BaseInterface(ABC):
         for evaluation in self.evaluations:
             evaluation_results[evaluation["title"]] = evaluation["method"]()
 
-        return {"evaluations": evaluation_results}
+        return evaluation_results
