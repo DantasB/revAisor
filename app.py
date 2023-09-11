@@ -75,10 +75,9 @@ def second_page():
         st.error("Invalid model selected. Please, try again.")
         st.stop()
 
-    interface = model(context, prompt)
     if prompt:
         st.write("revAIsor Response:")
-        st.write(interface.response)
+        st.write(model(context, prompt).response)
 
     if st.button("Submit another text"):
         st.session_state.pop("text")
