@@ -1,5 +1,5 @@
 import os
-from typing import Dict, List
+from typing import Dict
 
 import requests
 
@@ -8,7 +8,9 @@ from utils import should_have_all_defined
 
 
 class LLAMA2Interface(BaseInterface):
-    def __init__(self, context: str, prompts: Dict[str, str], max_tokens: int = 40000, temperature: float = 0):
+    def __init__(
+        self, context: str, prompts: Dict[str, str], max_tokens: int = 40000, temperature: float = 0
+    ):
         should_have_all_defined(["LLAMA2_API_URL"])
 
         self.ngrok_url = os.environ["LLAMA2_API_URL"]
@@ -80,7 +82,7 @@ class LLAMA2Interface(BaseInterface):
                     "presence_penalty": 0,
                 },
             },
-        ).json()['generated_text']
+        ).json()["generated_text"]
 
     def evaluate_prompt_by_grammar(self, prompt: str) -> Dict[str, str]:
         input = f"""
@@ -109,7 +111,7 @@ class LLAMA2Interface(BaseInterface):
                     "presence_penalty": 0,
                 },
             },
-        ).json()['generated_text']
+        ).json()["generated_text"]
 
     def evaluate_prompt_by_cohesion(self) -> Dict[str, str]:
         input = f"""
@@ -144,17 +146,18 @@ class LLAMA2Interface(BaseInterface):
                     "presence_penalty": 0,
                 },
             },
-        ).json()['generated_text']
+        ).json()["generated_text"]
+
     def evaluate_prompts_by_theme(self) -> Dict[str, str]:
         results = {}
         for prompt_name, prompt_text in self.prompts.items():
             result = self.evaluate_prompt_by_theme(prompt_text)
             results[prompt_name] = result
-        return results
+        return results  # type: ignore
 
     def evaluate_prompts_by_grammar(self) -> Dict[str, str]:
         results = {}
         for prompt_name, prompt_text in self.prompts.items():
             result = self.evaluate_prompt_by_grammar(prompt_text)
             results[prompt_name] = result
-        return results
+        return results  # type: ignore

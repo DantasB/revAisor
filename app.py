@@ -7,11 +7,13 @@ from interfaces import AVAILABLE_MODELS
 
 st.set_page_config(page_title="revAIsor - Scientific Article Review", layout="wide")
 
+
 @st.cache_resource
 def randomized_models() -> List[str]:
     models = ["Modelo 2", "Modelo 1"]
     shuffle(models)
     return models
+
 
 st.markdown(
     """
@@ -38,6 +40,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
 
 def main() -> None:
     st.title("Welcome to revAIsor!")
@@ -70,6 +73,7 @@ def main() -> None:
             st.session_state["conclusion"] = conclusion_text
             st.session_state["model"] = selected_model
             st.experimental_rerun()
+
 
 def second_page() -> None:
     abstract = st.session_state.get("abstract", "")
@@ -106,8 +110,12 @@ def second_page() -> None:
         st.session_state.pop("context")
         st.experimental_rerun()
 
+
 if __name__ == "__main__":
-    if all(parameter in st.session_state for parameter in ["abstract", "introduction", "conclusion", "context", "model"]):
+    if all(
+        parameter in st.session_state
+        for parameter in ["abstract", "introduction", "conclusion", "context", "model"]
+    ):
         second_page()
     else:
         main()
