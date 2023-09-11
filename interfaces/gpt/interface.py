@@ -3,7 +3,7 @@ import os
 import openai
 
 from interfaces.base import BaseInterface
-from utils.utils import should_have_all_defined
+from utils import should_have_all_defined
 
 
 class GPTInterface(BaseInterface):

@@ -4,7 +4,7 @@ from typing import Dict
 import requests
 
 from interfaces.base import BaseInterface
-from utils.utils import should_have_all_defined
+from utils import should_have_all_defined
 
 
 class LLAMA2Interface(BaseInterface):

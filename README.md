@@ -50,7 +50,10 @@ streamlit run app.py
 
 - `app.py`: Este é o arquivo principal do aplicativo que contém o código do projeto;
 - `requirements.txt`: Este arquivo contém as dependências do projeto;
-- `gpt/interface.py`: Este arquivo contém a classe que faz a interface com a API do GPT-3.5;
+- `interfaces/gpt/interface.py`: Este arquivo contém a classe que faz a interface com a API da OpenAI;
+- `interfaces/llama2/interface.py`: Este arquivo contém a classe que faz a interface com a API da Meta;
+- `interfaces/base.py`: Este arquivo contém a classe abstrata herdada pela interface dos dois modelos;
+- `utils/__init__.py`: Este arquivo alguns métodos utilizados por todas as classes;
 - `README.md`: Este arquivo com instruções sobre como executar o aplicativo.
 
 ### Contribuição
