@@ -22,8 +22,8 @@ class GPTInterface(BaseInterface):
             {
                 "title": "Coesion",
                 "description": "Evaluate the text by coesion.",
-                "method": self.evaluate_prompt_by_coesion,                
-            }
+                "method": self.evaluate_prompt_by_coesion,
+            },
         ]
 
         super().__init__(
@@ -37,9 +37,7 @@ class GPTInterface(BaseInterface):
 
     def validate_initialization(self):
         if not self.api_key:
-            raise ValueError(
-                "API KEY is not defined. Please refer to the README.md file."
-            )
+            raise ValueError("API KEY is not defined. Please refer to the README.md file.")
 
         openai.api_key = self.api_key
 
@@ -259,10 +257,13 @@ class GPTInterface(BaseInterface):
                     context about the article, so you can use it to evaluate the
                     text: {self.context}""",
                 },
-                {"role": "user", "content": f"""
+                {
+                    "role": "user",
+                    "content": f"""
                     These are my prompts: 
                     {self.prompt}
-                    """},
+                    """,
+                },
             ],
             temperature=0,
             max_tokens=self.max_tokens,

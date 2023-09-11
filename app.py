@@ -11,6 +11,7 @@ def randomized_models():
     shuffle(models)
     return models
 
+
 st.markdown(
     """
     <style>
@@ -52,7 +53,8 @@ def main():
     selected_model = st.radio("Select a model", randomized_models())
 
     context_text = st.text_area(
-        "Explain what is the objective of your article and what is the context of your work:")
+        "Explain what is the objective of your article and what is the context of your work:"
+    )
 
     input_text = st.text_area("Insert your article text here:")
     if st.button("Review"):
