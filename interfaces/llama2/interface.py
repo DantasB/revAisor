@@ -65,7 +65,7 @@ class LLAMA2Interface(BaseInterface):
             The user is also giving you a context about the article, so you can use it
             to evaluate the text: {self.context}
             ---
-            {prompt}
+            [user input]: This is my prompt: {prompt}
         """
 
         return requests.post(
@@ -93,22 +93,8 @@ class LLAMA2Interface(BaseInterface):
             enabling these components, and documents composed of them, to be described in RDF.
             The user is also giving you a context about the article, so you can use it
             to evaluate the text: {self.context}
+            ---           
 
-            --- 
-            Example 1:
-            [example input]: IoT software systems have made great strides since the new 
-            industrial revolution known as Industry 4.0. Its usage has been growing over the 
-            years, and research reports indicate the occurrence of exponential growth related 
-            to the utilization of these devices, with a forecast of surpassing 30 billion 
-            devices by 2024.
-            [your output]: 2 additional writing issues. 1 Unclear sentences. 1 Passive voice 
-            misuse. 
-            - You should remove "known as" in the sentence: "[...] revolution, known as 
-            Industry 4.0. [...]"
-            - You should remove "in which it was" in the sentence: "[...] systems in which it 
-            was applied and the approach [...]"
-            ---
-            
             [user input]: This is my prompt: {prompt}
         """
         return requests.post(
