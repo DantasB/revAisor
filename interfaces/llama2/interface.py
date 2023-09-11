@@ -1,11 +1,15 @@
 import os
 import requests
 from interfaces.base import BaseInterface
+from typing import Dict
+from utils.utils import should_have_all_defined
 
 
 class LLAMA2Interface(BaseInterface):
-    def __init__(self, context, prompt, max_tokens=40000, temperature=0):
-        self.ngrok_url = os.getenv("LLAMA2_API_URL")
+    def __init__(self, context: str, prompt: str, max_tokens: int = 40000, temperature: float = 0):
+        should_have_all_defined(["LLAMA2_API_URL"])
+
+        self.ngrok_url = os.environ["LLAMA2_API_URL"]
 
         self.evaluations = [
             {
@@ -29,11 +33,11 @@ class LLAMA2Interface(BaseInterface):
             temperature=temperature,
         )
 
-    def validate_initialization(self):
+    def validate_initialization(self) -> None:
         if not requests.get(self.ngrok_url).ok:
             raise ValueError("Ngrok is not running. Please, run it and try again.")
 
-    def evaluate_prompt_by_theme(self):
+    def evaluate_prompt_by_theme(self) -> Dict[str, str]:
         input = f"""
             [Context]: You are a scientific article revisor and you are a specialist in every 
             theme that is written in the text.
@@ -72,7 +76,7 @@ class LLAMA2Interface(BaseInterface):
             },
         ).json()
 
-    def evaluate_prompt_by_grammar(self):
+    def evaluate_prompt_by_grammar(self) -> Dict[str, str]:
         input = f"""
             [Context]: You are a scientific article revisor and one of the steps is the 
             grammar suggestion tool, giving which word or sentence should I change. Besides, 

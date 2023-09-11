@@ -1,13 +1,18 @@
 import os
 from interfaces.base import BaseInterface
 import openai
+from utils.utils import should_have_all_defined
 
 
 class GPTInterface(BaseInterface):
     def __init__(
-        self, context, prompt, model="gpt-3.5-turbo-16k", max_tokens=10000, temperature=0.5
+        self,
+        context: str,
+        prompt: str,
+        model: str = "gpt-3.5-turbo-16k",
+        max_tokens: int = 10000,
+        temperature: float = 0.5,
     ):
-        self.api_key = os.getenv("OPENAI_API_KEY")
         self.evaluations = [
             {
                 "title": "Theme",
@@ -35,13 +40,16 @@ class GPTInterface(BaseInterface):
             temperature=temperature,
         )
 
-    def validate_initialization(self):
+    def validate_initialization(self) -> None:
+        should_have_all_defined(["OPENAI_API_KEY"])
+        self.api_key = os.environ["OPENAI_API_KEY"]
+
         if not self.api_key:
             raise ValueError("API KEY is not defined. Please refer to the README.md file.")
 
         openai.api_key = self.api_key
 
-    def evaluate_prompt_by_theme(self):
+    def evaluate_prompt_by_theme(self) -> str:
         return openai.ChatCompletion.create(
             model=self.model,
             messages=[
@@ -164,7 +172,7 @@ class GPTInterface(BaseInterface):
             presence_penalty=0,
         )["choices"][0]["message"]["content"]
 
-    def evaluate_prompt_by_grammar(self):
+    def evaluate_prompt_by_grammar(self) -> str:
         return openai.ChatCompletion.create(
             model=self.model,
             messages=[
@@ -238,7 +246,7 @@ class GPTInterface(BaseInterface):
             presence_penalty=0,
         )["choices"][0]["message"]["content"]
 
-    def evaluate_prompt_by_coesion(self):
+    def evaluate_prompt_by_coesion(self) -> str:
         return openai.ChatCompletion.create(
             model=self.model,
             messages=[

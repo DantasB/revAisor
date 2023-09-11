@@ -1,11 +1,17 @@
-from dotenv import load_dotenv
 from abc import ABC, abstractmethod
-
-load_dotenv()
+from typing import List, Dict, Optional, Any
 
 
 class BaseInterface(ABC):
-    def __init__(self, context, prompt, model, evaluations, max_tokens=10000, temperature=0.5):
+    def __init__(
+        self,
+        context: str,
+        prompt: str,
+        model: Optional[str],
+        evaluations: List[Dict[str, Any]],
+        max_tokens: int = 10000,
+        temperature: float = 0.5,
+    ):
         self.context = context
         self.prompt = prompt
         self.model = model
@@ -18,7 +24,7 @@ class BaseInterface(ABC):
     def validate_initialization(self):
         pass
 
-    def get_response(self):
+    def get_response(self) -> Dict[str, Dict[str, str]]:
         self.validate_initialization()
 
         # Execute each evaluation method and store the results

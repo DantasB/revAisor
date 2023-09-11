@@ -1,12 +1,13 @@
 import streamlit as st
 from interfaces import AVAILABLE_MODELS
 from random import shuffle
+from typing import List
 
 st.set_page_config(page_title="revAIsor - Scientific Article Review", layout="wide")
 
 
 @st.cache_resource
-def randomized_models():
+def randomized_models() -> List[str]:
     models = ["Modelo 2", "Modelo 1"]
     shuffle(models)
     return models
@@ -39,7 +40,7 @@ st.markdown(
 )
 
 
-def main():
+def main() -> None:
     st.title("Welcome to revAIsor!")
     st.markdown(
         """
@@ -64,7 +65,7 @@ def main():
         st.experimental_rerun()
 
 
-def second_page():
+def second_page() -> None:
     prompt = st.session_state.get("text", "")
     selected_model = st.session_state.get("model", "")
     context = st.session_state.get("context", "")
@@ -89,7 +90,7 @@ def second_page():
 
 
 if __name__ == "__main__":
-    if "text" in st.session_state:
+    if all(parameter in st.session_state for parameter in ["text", "context", "model"]):
         second_page()
     else:
         main()
