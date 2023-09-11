@@ -1,7 +1,9 @@
-import streamlit as st
-from interfaces import AVAILABLE_MODELS
 from random import shuffle
 from typing import List
+
+import streamlit as st
+
+from interfaces import AVAILABLE_MODELS
 
 st.set_page_config(page_title="revAIsor - Scientific Article Review", layout="wide")
 

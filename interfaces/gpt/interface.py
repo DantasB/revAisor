@@ -1,6 +1,8 @@
 import os
-from interfaces.base import BaseInterface
+
 import openai
+
+from interfaces.base import BaseInterface
 from utils.utils import should_have_all_defined
 
 

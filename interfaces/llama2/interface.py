@@ -1,7 +1,9 @@
 import os
-import requests
-from interfaces.base import BaseInterface
 from typing import Dict
+
+import requests
+
+from interfaces.base import BaseInterface
 from utils.utils import should_have_all_defined
 
 
