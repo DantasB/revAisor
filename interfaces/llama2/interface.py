@@ -48,11 +48,11 @@ class LLAMA2Interface(BaseInterface):
 
     def __summarize_text(self, text: str) -> str:
         input = f"""[INST] <<SYS>>
-            You are a scientific article revisor and one of the steps is 
-            to summarize the text. The user will give you the text and your objective is
-            to summarize it.
+            You are a scientific article reviewer tasked with summarizing a given text.
             <</SYS>>
-            summarize this text for me. {text}
+
+            Summarize the following text: {text}
+
             [/INST]
         """
         return requests.post(
@@ -71,28 +71,29 @@ class LLAMA2Interface(BaseInterface):
 
     def evaluate_prompt_by_theme(self, prompt: str) -> Dict[str, str]:
         input = f"""[INST] <<SYS>>
-            You are a scientific article revisor and you are a specialist in every 
-            theme that is written in the text.
-            Judge with knowledge suggesting the author in which topics he would emphasize 
-            better and what should he rewrite to bring better readability of the theme.
-            The categories of suggestions are:
-            - Improve References;
-            - Theme Violation;
-            - Missing Related Works if exists;
-            - Missing information;
-            - Confusing Explanation;
-            - Missing Limitations;
-            - Others.
-            Where the Others you can generate other categories.
-            Also use clear language when you are suggesting to be clear in which parts of the 
-            text the author should make the changes.
-            List as many suggestions as you can.
-            The user is also giving you a context about the article, so you can use it
-            to evaluate the text: {self.context}
+            As a scientific article reviewer with expertise in various themes, your role 
+            is to provide valuable feedback to the author for better emphasis and 
+            readability of the text. Your suggestions may fall into categories such as:
+            
+            - Improve References
+            - Address Theme Violations
+            - Identify Missing Related Works (if any)
+            - Point Out Missing Information
+            - Clarify Confusing Explanations
+            - Address Missing Limitations
+            - Suggest Other Improvements
+            
+            You can also create additional categories if needed. Ensure that your feedback 
+            is clear and specific, indicating the sections of the text that require changes.
+
+            Utilize the context provided by the user to evaluate the article effectively.
             <</SYS>>
+      
             {prompt}
+
             [/INST]
         """
+
 
         return requests.post(
             self.ngrok_url + "/generate",
@@ -110,19 +111,22 @@ class LLAMA2Interface(BaseInterface):
 
     def evaluate_prompt_by_grammar(self, prompt: str) -> Dict[str, str]:
         input = f"""[INST] <<SYS>>
-            You are a scientific article revisor and one of the steps is the 
-            grammar suggestion tool, giving which word or sentence should I change. Besides, 
-            check if the document follows the DoCO, the Document Components Ontology that 
-            provides a structured vocabulary written in OWL 2 DL of document components, both 
-            structural (e.g. block, inline, paragraph, section, chapter) and rhetorical (e.g. 
-            introduction, discussion, acknowledgements, reference list, figure, appendix), 
-            enabling these components, and documents composed of them, to be described in RDF.
-            The user is also giving you a context about the article, so you can use it
-            to evaluate the text: {self.context}
-            <</SYS>>        
+            You are a scientific article reviewer tasked with grammar suggestions. 
+            Additionally, check if the document follows DoCO, the Document Components 
+            Ontology, which provides a structured vocabulary for document components, both 
+            structural (e.g., block, inline, paragraph, section) and rhetorical (e.g., 
+            introduction, discussion, acknowledgments, reference list). This ontology 
+            enables these components and documents composed of them to be described in RDF.
+
+            The user has also provided you with context about the article, which you can 
+            use to evaluate the text effectively: {self.context}
+            <</SYS>>  
+      
             {prompt}
+
             [/INST]
         """
+
         return requests.post(
             self.ngrok_url + "/generate",
             json={
@@ -143,24 +147,30 @@ class LLAMA2Interface(BaseInterface):
         conclusion = self.__summarize_text(self.prompts["conclusion"])
 
         input = f"""[INST] <<SYS>>
-            You are a scientific article revisor and one of the steps is 
-            to evaluate the prompt coesion. The user will give you the introduction,
-            the abstract and the conclusion of the article. Your objective is to evaluate
-            if they make sense, for example, if the user give the abstract and the
-            introduction talks about other thing, there's something wrong and you should
-            point that to the user. If the introduction says about something but the
-            conclusion is the oposite you should also point that to the user. If the 
-            introduction and conclusion are consistent but the abstract is not consistent,
-            you should also point that to the user. But, if the three are consistents,
-            you should say that the three are consistent. The user is also giving you a
-            context about the article, so you can use it to evaluate the
-            text: {self.context}
-            <</SYS>>
+            You are a scientific article reviewer tasked with evaluating the coherence 
+            between the sections of the provided article. Your role is to assess whether 
+            the "Abstract," "Introduction," and "Conclusion" align in terms of their 
+            content and messaging. If there are inconsistencies, please provide feedback 
+            to the user.
+
+            Your objective is to determine if these sections make sense together. For 
+            instance, if the abstract discusses one topic, but the introduction talks 
+            about something entirely different, please flag this as a potential issue. 
+            Similarly, if the introduction and conclusion have opposing statements, point 
+            that out. And if the three sections are consistent, acknowledge their 
+            cohesion.
+
+            The user has also provided you with context about the article, which you can 
+            use to evaluate the text effectively: {self.context}
+            <</SYS>>            
+
             Abstract:{abstract}
             Introduction:{introduction}
             Conclusion:{conclusion}
+            
             [/INST]
         """
+
         return requests.post(
             self.ngrok_url + "/generate",
             json={
