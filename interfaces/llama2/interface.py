@@ -45,7 +45,7 @@ class LLAMA2Interface(BaseInterface):
     def validate_initialization(self) -> None:
         if not requests.get(self.ngrok_url).ok:
             raise ValueError("Ngrok is not running. Please, run it and try again.")
-    
+
     def __summarize_text(self, text: str) -> str:
         input = f"""[INST] <<SYS>>
             You are a scientific article revisor and one of the steps is 
@@ -67,7 +67,7 @@ class LLAMA2Interface(BaseInterface):
                     "presence_penalty": 0,
                 },
             },
-        ).json()['generated_text']
+        ).json()["generated_text"]
 
     def evaluate_prompt_by_theme(self, prompt: str) -> Dict[str, str]:
         input = f"""[INST] <<SYS>>
@@ -106,7 +106,7 @@ class LLAMA2Interface(BaseInterface):
                     "presence_penalty": 0,
                 },
             },
-        ).json()['generated_text']
+        ).json()["generated_text"]
 
     def evaluate_prompt_by_grammar(self, prompt: str) -> Dict[str, str]:
         input = f"""[INST] <<SYS>>
@@ -135,12 +135,12 @@ class LLAMA2Interface(BaseInterface):
                     "presence_penalty": 0,
                 },
             },
-        ).json()['generated_text']
+        ).json()["generated_text"]
 
     def evaluate_prompt_by_cohesion(self) -> Dict[str, str]:
-        abstract = self.__summarize_text(self.prompts['abstract'])
-        introduction = self.__summarize_text(self.prompts['introduction'])
-        conclusion = self.__summarize_text(self.prompts['conclusion'])
+        abstract = self.__summarize_text(self.prompts["abstract"])
+        introduction = self.__summarize_text(self.prompts["introduction"])
+        conclusion = self.__summarize_text(self.prompts["conclusion"])
 
         input = f"""[INST] <<SYS>>
             You are a scientific article revisor and one of the steps is 
@@ -173,7 +173,7 @@ class LLAMA2Interface(BaseInterface):
                     "presence_penalty": 0,
                 },
             },
-        ).json()['generated_text']
+        ).json()["generated_text"]
 
     def evaluate_prompts_by_theme(self) -> Dict[str, str]:
         results = {}
