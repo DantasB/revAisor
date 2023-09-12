@@ -9,7 +9,7 @@ from utils import should_have_all_defined
 
 class LLAMA2Interface(BaseInterface):
     def __init__(
-        self, context: str, prompts: Dict[str, str], max_tokens: int = 40000, temperature: float = 0
+        self, context: str, prompts: Dict[str, str], max_tokens: int = 10000, temperature: float = 0
     ):
         should_have_all_defined(["LLAMA2_API_URL"])
 
@@ -45,10 +45,33 @@ class LLAMA2Interface(BaseInterface):
     def validate_initialization(self) -> None:
         if not requests.get(self.ngrok_url).ok:
             raise ValueError("Ngrok is not running. Please, run it and try again.")
+    
+    def __summarize_text(self, text: str) -> str:
+        input = f"""[INST] <<SYS>>
+            You are a scientific article revisor and one of the steps is 
+            to summarize the text. The user will give you the text and your objective is
+            to summarize it.
+            <</SYS>>
+            summarize this text for me. {text}
+            [/INST]
+        """
+        return requests.post(
+            self.ngrok_url + "/generate",
+            json={
+                "inputs": input,
+                "parameters": {
+                    "temperature": self.temperature,
+                    "max_tokens": self.max_tokens,
+                    "top_p": 0.5,
+                    "frequency_penalty": 0,
+                    "presence_penalty": 0,
+                },
+            },
+        ).json()['generated_text']
 
     def evaluate_prompt_by_theme(self, prompt: str) -> Dict[str, str]:
-        input = f"""
-            [Context]: You are a scientific article revisor and you are a specialist in every 
+        input = f"""[INST] <<SYS>>
+            You are a scientific article revisor and you are a specialist in every 
             theme that is written in the text.
             Judge with knowledge suggesting the author in which topics he would emphasize 
             better and what should he rewrite to bring better readability of the theme.
@@ -66,8 +89,9 @@ class LLAMA2Interface(BaseInterface):
             List as many suggestions as you can.
             The user is also giving you a context about the article, so you can use it
             to evaluate the text: {self.context}
-            ---
-            [user input]: This is my prompt: {prompt}
+            <</SYS>>
+            {prompt}
+            [/INST]
         """
 
         return requests.post(
@@ -82,11 +106,11 @@ class LLAMA2Interface(BaseInterface):
                     "presence_penalty": 0,
                 },
             },
-        ).json()["generated_text"]
+        ).json()['generated_text']
 
     def evaluate_prompt_by_grammar(self, prompt: str) -> Dict[str, str]:
-        input = f"""
-            [Context]: You are a scientific article revisor and one of the steps is the 
+        input = f"""[INST] <<SYS>>
+            You are a scientific article revisor and one of the steps is the 
             grammar suggestion tool, giving which word or sentence should I change. Besides, 
             check if the document follows the DoCO, the Document Components Ontology that 
             provides a structured vocabulary written in OWL 2 DL of document components, both 
@@ -95,9 +119,9 @@ class LLAMA2Interface(BaseInterface):
             enabling these components, and documents composed of them, to be described in RDF.
             The user is also giving you a context about the article, so you can use it
             to evaluate the text: {self.context}
-            ---           
-
-            [user input]: This is my prompt: {prompt}
+            <</SYS>>        
+            {prompt}
+            [/INST]
         """
         return requests.post(
             self.ngrok_url + "/generate",
@@ -111,11 +135,15 @@ class LLAMA2Interface(BaseInterface):
                     "presence_penalty": 0,
                 },
             },
-        ).json()["generated_text"]
+        ).json()['generated_text']
 
     def evaluate_prompt_by_cohesion(self) -> Dict[str, str]:
-        input = f"""
-            [Context]: You are a scientific article revisor and one of the steps is 
+        abstract = self.__summarize_text(self.prompts['abstract'])
+        introduction = self.__summarize_text(self.prompts['introduction'])
+        conclusion = self.__summarize_text(self.prompts['conclusion'])
+
+        input = f"""[INST] <<SYS>>
+            You are a scientific article revisor and one of the steps is 
             to evaluate the prompt coesion. The user will give you the introduction,
             the abstract and the conclusion of the article. Your objective is to evaluate
             if they make sense, for example, if the user give the abstract and the
@@ -127,12 +155,11 @@ class LLAMA2Interface(BaseInterface):
             you should say that the three are consistent. The user is also giving you a
             context about the article, so you can use it to evaluate the
             text: {self.context}
-            ---
-
-            [user input]: These are my prompts: 
-            Abstract:{self.prompts['abstract']}
-            Introduction:{self.prompts['introduction']}
-            Conclusion:{self.prompts['conclusion']}
+            <</SYS>>
+            Abstract:{abstract}
+            Introduction:{introduction}
+            Conclusion:{conclusion}
+            [/INST]
         """
         return requests.post(
             self.ngrok_url + "/generate",
@@ -146,7 +173,7 @@ class LLAMA2Interface(BaseInterface):
                     "presence_penalty": 0,
                 },
             },
-        ).json()["generated_text"]
+        ).json()['generated_text']
 
     def evaluate_prompts_by_theme(self) -> Dict[str, str]:
         results = {}
