@@ -4,5 +4,5 @@ from interfaces.gpt.interface import GPTInterface
 from interfaces.llama2.interface import LLAMA2Interface
 
 AVAILABLE_MODELS = defaultdict(
-    int, {"Modelo 2": GPTInterface, "Modelo 1": LLAMA2Interface}  # type: ignore
+    int, {"GPT-3.5": GPTInterface, "LLAMA2": LLAMA2Interface}  # type: ignore
 )
