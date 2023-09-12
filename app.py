@@ -10,7 +10,7 @@ st.set_page_config(page_title="revAIsor - Scientific Article Review", layout="wi
 
 @st.cache_resource
 def randomized_models() -> List[str]:
-    models = ["Modelo 2", "Modelo 1"]
+    models = list(AVAILABLE_MODELS.keys())
     shuffle(models)
     return models
 
